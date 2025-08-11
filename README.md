@@ -57,7 +57,6 @@
 - **Platform:** Windows x64
 - **Node.js:** v18
 - **Discord.js:** Selfbot v13
-- **Build Tool:** PKG
 
 ## 📞 İletişim
 
