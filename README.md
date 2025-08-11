@@ -1,51 +1,73 @@
-# Henzy Self Patlatma v1.0
+# 🚀 Henzy Self Patlatma - Discord Server Cleaner Tool
 
-Discord sunucu temizleme ve spam aracı.
+> **⚠️ UYARI: Bu tool Discord ToS'a aykırıdır! Hesap banlanması riski vardır!**
 
-## 🚀 Kurulum
+## 📋 Özellikler
 
-1. **Exe Oluştur:**
-   ```
-   build-exe.bat
-   ```
+- 🔥 **Tek seferde** tüm kanalları siler
+- 👥 **Tek seferde** tüm üyeleri atar  
+- 🚀 **50 adet spam kanalı** oluşturur
+- 🎯 **Sadece yetkili kullanıcıdan** komut alır
+- ⚡ **Hızlı ve etkili** patlatma sistemi
 
-2. **Config Düzenle:**
-   `config.json` dosyasını açın ve bilgileri girin:
-   ```json
-   {
-       "discord_token": "DISCORD_SELF_TOKEN",
-       "user_id": "KULLANICI_ID",
-       "channel_name": "KANAL_ADI",
-       "message_content": "MESAJ_ICERIGI"
-   }
-   ```
+## 🎯 Nasıl Kullanılır
 
-3. **Çalıştır:**
-   ```
-   start-exe.bat
-   ```
+### 1️⃣ **Exe Dosyasını İndir**
+- [Releases](https://github.com/Henzy98/HenzySelfPatlatma/releases) sayfasından en son versiyonu indir
+- `henzy-patlatma-v8.exe` dosyasını bilgisayarına kaydet
 
-## 📋 Komutlar
+### 2️⃣ **Discord Token Al**
+- Discord'da **Developer Mode**'u aç
+- **Application** → **Bot** → **Token** kopyala
+- **⚠️ Token'ı kimseyle paylaşma!**
 
-- `.selam` - Sunucudaki tüm kanalları siler ve spam başlatır
+### 3️⃣ **Kullanıcı ID Bul**
+- Discord'da **Developer Mode**'u aç
+- Komut kullanacak **hesabın ID'sini** kopyala
+- Bu ID'ye sahip hesap `.selam` komutunu kullanabilecek
 
-## ⚠️ Uyarı
+### 4️⃣ **Tool'u Çalıştır**
+- `henzy-patlatma-v8.exe` dosyasını çalıştır
+- Discord token'ını gir
+- Kullanıcı ID'sini gir
+- Kanal adını gir (örn: `spam`)
+- Spam mesajını gir (örn: `Henzy was here!`)
 
-- Self-token kullanımı Discord ToS'a aykırıdır
-- Hesap banlanması riski vardır
-- Sadece eğitim amaçlıdır
+### 5️⃣ **Komut Kullan**
+- **Belirttiğin hesaptan** `.selam` yaz
+- Tool otomatik olarak **o sunucuyu** hedefleyecek
+- Sunucu patlatılacak! 🎉
 
-## 🔒 Güvenlik
+## 📱 Komutlar
 
-- Ana kod exe dosyasında gizlidir
-- Reverse engineering korumalıdır
-- Çoklu katmanlı koruma sistemi
+| Komut | Açıklama |
+|-------|----------|
+| `.selam` | Sunucudaki tüm kanalları siler, üyeleri atar, spam kanalları oluşturur |
 
-## 📧 İletişim
+## ⚠️ Önemli Notlar
 
-- GitHub: https://github.com/henzy
-- Email: henzy@github.com
+- **Token'ı kimseyle paylaşma!**
+- **Sadece kendi sunucularında** kullan
+- **Discord ToS'a aykırı** olduğunu unutma
+- **Hesap banlanması** riski vardır
+- **Sorumluluk kullanıcıya aittir**
 
-## 📄 Lisans
+## 🔧 Teknik Detaylar
 
-MIT License
+- **Platform:** Windows x64
+- **Node.js:** v18
+- **Discord.js:** Selfbot v13
+- **Build Tool:** PKG
+
+## 📞 İletişim
+
+- **GitHub:** [Henzy98](https://github.com/Henzy98)
+- **Tool:** Henzy Self Patlatma v1.0
+
+## ⭐ Star
+
+Eğer tool'u beğendiysen repo'ya star at! 🌟
+
+---
+
+**🔐 Tool signed by Henzy - All rights reserved**
