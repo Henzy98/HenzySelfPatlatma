@@ -6,10 +6,8 @@
   "bin": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "pkg index.js --target node18-win-x64 --output ./henzy-patlatma-new.exe --public --assets icon.ico",
+    "build": "pkg index.js --target node18-win-x64 --output ./henzy-patlatma-v8.exe --public",
     "build:optimized": "pkg index.js --target node18-win-x64 --output ./dist/henzy-patlatma.exe --public --assets icon.ico,config.json",
-    "build:nexe": "nexe index.js --build --target win32-x64-18.17.0 --icon icon.ico --output henzy-patlatma-nexe.exe",
-    "build:all": "npm run build:optimized && npm run build:nexe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -21,8 +19,7 @@
   "author": "Henzy",
   "license": "MIT",
   "dependencies": {
-    "discord.js-selfbot-v13": "^2.15.0",
-    "nexe": "^5.0.0-beta.4"
+    "discord.js-selfbot-v13": "^2.14.11"
   },
   "devDependencies": {
     "pkg": "^5.8.1"
@@ -39,6 +36,8 @@
       "icon.ico"
     ],
     "outputPath": "dist",
-    "public": true
+    "public": true,
+    "nodeVersion": "node18",
+    "nativeAddons": true
   }
 }
