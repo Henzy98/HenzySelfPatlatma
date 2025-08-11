@@ -1,36 +1,51 @@
-# Henzy Self Patlatma
+# Henzy Self Patlatma v1.0
 
 Discord sunucu temizleme ve spam aracı.
 
-## Kurulum
+## 🚀 Kurulum
 
-1. Node.js kurulu olmalı
-2. `npm install discord.js-selfbot-v13` komutunu çalıştır
-3. `index.js` dosyasındaki değişkenleri doldur:
-   - `DISCORD_TOKEN`: Discord self-token
-   - `USER_ID`: Komutu kullanacak kişinin ID'si
-   - `CHANNEL_NAME`: Oluşturulacak kanal adı
-   - `MESSAGE_CONTENT`: Gönderilecek mesaj
+1. **Exe Oluştur:**
+   ```
+   build-exe.bat
+   ```
 
-## Kullanım
+2. **Config Düzenle:**
+   `config.json` dosyasını açın ve bilgileri girin:
+   ```json
+   {
+       "discord_token": "DISCORD_SELF_TOKEN",
+       "user_id": "KULLANICI_ID",
+       "channel_name": "KANAL_ADI",
+       "message_content": "MESAJ_ICERIGI"
+   }
+   ```
 
-1. `node index.js` ile çalıştır
-2. Discord'da `.selam` komutunu kullan
-3. Tool otomatik olarak:
-   - Tüm üyeleri atar
-   - Tüm kanalları siler
-   - Sürekli yeni kanal oluşturur
-   - Her kanala mesaj gönderir
+3. **Çalıştır:**
+   ```
+   start-exe.bat
+   ```
 
-## Özellikler
+## 📋 Komutlar
 
-- Hızlı üye atma
-- Toplu kanal silme
-- Sürekli kanal oluşturma
-- Otomatik mesaj gönderme
-- Rate limit koruması
-- Akıllı hız kontrolü
+- `.selam` - Sunucudaki tüm kanalları siler ve spam başlatır
 
-## Dikkat
+## ⚠️ Uyarı
 
-Self-token kullanımı Discord ToS'a aykırıdır. Hesap banlanma riski vardır.
+- Self-token kullanımı Discord ToS'a aykırıdır
+- Hesap banlanması riski vardır
+- Sadece eğitim amaçlıdır
+
+## 🔒 Güvenlik
+
+- Ana kod exe dosyasında gizlidir
+- Reverse engineering korumalıdır
+- Çoklu katmanlı koruma sistemi
+
+## 📧 İletişim
+
+- GitHub: https://github.com/henzy
+- Email: henzy@github.com
+
+## 📄 Lisans
+
+MIT License

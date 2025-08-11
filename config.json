@@ -1,0 +1,6 @@
+{
+    "discord_token": "YOUR_TOKEN_HERE",
+    "user_id": "YOUR_USER_ID_HERE",
+    "channel_name": "test-channel",
+    "message_content": "test message"
+}

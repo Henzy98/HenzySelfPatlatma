@@ -1,24 +1,44 @@
 {
-  "name": "henzyselfpatlatma",
+  "name": "henzy-self-patlatma",
   "version": "1.0.0",
+  "description": "Discord Server Cleaner Tool",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "build": "pkg index.js --target node18-win-x64 --output ./henzy-patlatma-new.exe --public --assets icon.ico",
+    "build:optimized": "pkg index.js --target node18-win-x64 --output ./dist/henzy-patlatma.exe --public --assets icon.ico,config.json",
+    "build:nexe": "nexe index.js --build --target win32-x64-18.17.0 --icon icon.ico --output henzy-patlatma-nexe.exe",
+    "build:all": "npm run build:optimized && npm run build:nexe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Henzy98/HenzySelfPatlatma.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Henzy98/HenzySelfPatlatma/issues"
-  },
-  "homepage": "https://github.com/Henzy98/HenzySelfPatlatma#readme",
-  "description": "",
+  "keywords": [
+    "discord",
+    "server",
+    "cleaner",
+    "tool"
+  ],
+  "author": "Henzy",
+  "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.21.0",
-    "discord.js-selfbot-v13": "^3.7.0"
+    "discord.js-selfbot-v13": "^2.15.0",
+    "nexe": "^5.0.0-beta.4"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+    "targets": [
+      "node18-win-x64"
+    ],
+    "assets": [
+      "icon.ico",
+      "config.json"
+    ],
+    "scripts": [
+      "icon.ico"
+    ],
+    "outputPath": "dist",
+    "public": true
   }
 }
