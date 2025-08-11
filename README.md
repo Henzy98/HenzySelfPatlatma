@@ -62,6 +62,7 @@
 ## 📞 İletişim
 
 - **GitHub:** [Henzy98](https://github.com/Henzy98)
+- **Discord:** henzy988
 - **Tool:** Henzy Self Patlatma v1.0
 
 ## ⭐ Star
